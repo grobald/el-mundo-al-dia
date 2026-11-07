@@ -1,6 +1,20 @@
 # 🌍 El Mundo al Día
 
-Periódico familiar estático en español, accesible desde el celular. Sin servidor, base de datos ni mantenimiento de infraestructura.
+Periódico familiar estático en español, accesible desde el celular. Sin base de datos. La edición diaria se genera en n8n; el sitio es un contenedor nginx estático.
+
+## Deploy en Coolify (`noticias.aisolutions.at`)
+
+1. Empuja este repo a GitHub (`grobald/el-mundo-al-dia` o el remoto que uses).
+2. En Coolify: **+ New Resource → Application → Public Repository** (o GitHub App si el repo es privado).
+3. Ajustes:
+   - **Build Pack:** Dockerfile
+   - **Branch:** `main`
+   - **Ports Exposes:** `80`
+   - **Domain:** `https://noticias.aisolutions.at`
+   - **Healthcheck Path:** `/health` (opcional; el Dockerfile ya incluye un healthcheck)
+4. Deploy. El HTML lee primero el webhook n8n (`/webhook/el-mundo-al-dia`) y, si falla, los JSON en `/data/`.
+
+API token de Coolify (para MCP/automatización): **Keys & Tokens** en el perfil → crear token con permisos de lectura/escritura/deploy → pegarlo en Cursor MCP (`coolify` Authorization header).
 
 ## Publicar gratis en GitHub Pages
 
@@ -15,9 +29,9 @@ Periódico familiar estático en español, accesible desde el celular. Sin servi
 ## Qué hace
 
 - Cada mañana intenta ejecutar la actualización a las **08:00, hora de Austria**, con ajuste de horario de verano/invierno.
-- Recoge titulares recientes con la **Google News API de SerpAPI** por categoría (ES/EN/DE, priorizando Reuters, AP, BBC, ORF, DW, Andina, RPP, Bloomberg, FT).
+- Recoge titulares de las **últimas 24 horas** con SerpAPI Google News (incl. site: Reuters/AP/Bloomberg/FT) y RSS directos de **ORF, BBC, DW, Andina y RPP**.
 - Usa OpenAI con un prompt editorial de redacción senior para seleccionar 7–10 noticias, marcar el **Top 3**, contrastar fuentes y redactar resúmenes en español y alemán.
-- Añade un snapshot de mercados verificado (BTC, ETH, EUR/USD vía CoinGecko/Frankfurter).
+- Añade un snapshot de mercados verificado (BTC, ETH, EUR/USD, S&P 500, Nasdaq, oro, Brent).
 - Conserva las ediciones anteriores y no reemplaza la última edición si falla la actualización.
 - Diseño responsive con briefing del día, destacadas, mercados y sección Perú/Austria.
 

@@ -11,13 +11,33 @@ DATA.mkdir(exist_ok=True)
 TOPICS = [
     ('Geopolítica', 'Geopolitik', 'geopolitics world diplomacy conflict (Reuters OR AP OR BBC OR DW OR AFP)', 'us', 'en'),
     ('Geopolítica', 'Geopolitik', 'geopolítica diplomacia conflicto (Reuters OR BBC OR DW OR AFP)', 'us', 'es'),
+    ('Geopolítica', 'Geopolitik', 'site:reuters.com', 'us', 'en'),
+    ('Geopolítica', 'Geopolitik', 'site:apnews.com', 'us', 'en'),
     ('Europa y Austria', 'Europa und Österreich', 'Austria Europe politics economy (ORF OR APA OR Reuters OR DW OR "Der Standard")', 'at', 'de'),
     ('Estados Unidos', 'Vereinigte Staaten', 'United States politics (Reuters OR AP OR Bloomberg OR BBC)', 'us', 'en'),
     ('Perú', 'Peru', 'Peru noticias actualidad (Andina OR RPP OR Gestión OR Reuters OR BBC)', 'pe', 'es'),
     ('Perú', 'Peru', 'sismo OR temblor Perú magnitud IGP', 'pe', 'es'),
     ('Economía', 'Wirtschaft', 'world economy financial markets (Bloomberg OR Reuters OR "Financial Times" OR CNBC)', 'us', 'en'),
+    ('Economía', 'Wirtschaft', 'site:bloomberg.com', 'us', 'en'),
+    ('Economía', 'Wirtschaft', 'site:ft.com', 'us', 'en'),
     ('Inteligencia artificial', 'Künstliche Intelligenz', 'artificial intelligence technology (Reuters OR Bloomberg OR BBC OR Wired)', 'us', 'en'),
     ('Criptomonedas', 'Kryptowährungen', 'bitcoin cryptocurrency regulation (Reuters OR Bloomberg OR CoinDesk)', 'us', 'en'),
+]
+OUTLET_FEEDS = [
+    ('Europa y Austria', 'Europa und Österreich', 'ORF', 'https://rss.orf.at/news.xml'),
+    ('Europa y Austria', 'Europa und Österreich', 'ORF', 'https://rss.orf.at/oesterreich.xml'),
+    ('Europa y Austria', 'Europa und Österreich', 'Der Standard', 'https://www.derstandard.at/rss'),
+    ('Europa y Austria', 'Europa und Österreich', 'DW', 'https://rss.dw.com/rdf/rss-de-eu'),
+    ('Europa y Austria', 'Europa und Österreich', 'BBC', 'https://feeds.bbci.co.uk/news/world/europe/rss.xml'),
+    ('Estados Unidos', 'Vereinigte Staaten', 'BBC', 'https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml'),
+    ('Estados Unidos', 'Vereinigte Staaten', 'NPR', 'https://feeds.npr.org/1001/rss.xml'),
+    ('Geopolítica', 'Geopolitik', 'BBC Mundo', 'https://feeds.bbci.co.uk/mundo/rss.xml'),
+    ('Geopolítica', 'Geopolitik', 'BBC', 'https://feeds.bbci.co.uk/news/world/rss.xml'),
+    ('Geopolítica', 'Geopolitik', 'DW', 'https://rss.dw.com/rdf/rss-sp-inter'),
+    ('Perú', 'Peru', 'Andina', 'https://andina.pe/agencia/rss.aspx'),
+    ('Perú', 'Peru', 'RPP', 'https://rpp.pe/feed'),
+    ('Perú', 'Peru', 'RPP', 'https://rpp.pe/feed/politica'),
+    ('Perú', 'Peru', 'RPP', 'https://rpp.pe/feed/actualidad'),
 ]
 REGIONS = {'Perú': 'peru', 'Estados Unidos': 'us', 'Europa y Austria': 'at-eu'}
 CAT_DE = {
@@ -32,51 +52,13 @@ PREFERRED = re.compile(
 )
 AGENTS = {'User-Agent': 'ElMundoAlDia/1.0 (personal news reader)'}
 
-EDITOR_PROMPT = '''You are the senior news editor and researcher for "El Mundo al Día",
-a daily Spanish-language international news briefing for families (Peruvian Spanish + Austrian German).
-
-You receive a RESEARCH PACK with SerpAPI Google News headlines (id, category, title, source, published, url, optional snippet),
-a market snapshot with verified prices, the 24-hour reporting window, and an explicit research limitation.
-You do NOT receive full article texts. Never invent facts beyond the pack.
-
-TASK
-Research and summarize the 7–10 most important news stories from the last 24 hours (fewer if necessary).
-
-PRIORITIES
-1. Global geopolitics, conflicts, and diplomacy
-2. Europe and Austria
-3. United States
-4. Peru
-5. Economy, financial markets, and energy
-6. Artificial intelligence and technology
-7. Cryptocurrencies and blockchain
-
-RESEARCH & VERIFICATION
-- Prefer Reuters, AP, BBC, ORF, DW, Andina, RPP, Bloomberg, Financial Times and similar outlets when present.
-- Verify major claims using at least two independent headlines/snippets whenever possible; otherwise label as single-source.
-- Check event dates, publication dates, and article URLs from the pack only.
-- Distinguish confirmed facts, attributed claims, and rumors.
-- Never invent events, quotes, figures, prices, or sources.
-- Exclude outdated, duplicated, or insufficiently verified news.
-- Include Peru and Austria when relevant verified news exists.
-
-EDITORIAL REQUIREMENTS
-- Highlight the three most significant stories with is_top=true and put them first.
-- Write clear, neutral, accessible Spanish (Peruvian-friendly) and Austrian German (*_de) with NO added facts.
-- ALWAYS rewrite title into Spanish. Never leave English/German source headlines as the published title.
-- Prefer at least one Peru story when the pack contains verified Peru headlines.
-- summary: 80–120 words.
-- For each story return the exact headline id and that headline's url exactly. Optional sources: 1–3 pack urls only.
-- Markets: only from the research pack; omit missing assets. Do not invent S&P/Nasdaq/gold/Brent if absent.
-
-OUTPUT
-Return JSON only:
-{"edition_date":"YYYY-MM-DD","reporting_window":"...","headline":"...","intro":"...","headline_de":"...","intro_de":"...","stories":[{"id":"h1","is_top":true,"category":"...","country_region":"...","event_date":"YYYY-MM-DD","title":"...","summary":"...","confirmed_facts":"...","unverified_claims":"...","impact":"...","verification":"...","title_de":"...","summary_de":"...","impact_de":"...","verification_de":"...","source":"...","url":"...","sources":[{"id":"h1","url":"...","source":"...","published":"..."}]}],"peru_update":"...","austria_update":"...","peru_update_de":"...","austria_update_de":"...","markets":{"items":[{"symbol":"BTC","price":0,"as_of":"...","source":"..."}],"note":"..."},"conclusion":"...","conclusion_de":"..."}
-
-IMPORTANT
-Accuracy and verifiable sources beat story count. Never present speculation as fact.
-verification must include: Información basada en investigación de titulares/snippets vía SerpAPI; consultar las fuentes originales.
-verification_de must include: Information beruht auf SerpAPI-Titeln/Snippets; Originalquellen prüfen.
+EDITOR_PROMPT = (Path(__file__).parent / 'prompt.md').read_text(encoding='utf-8') if (Path(__file__).parent / 'prompt.md').exists() else '''
+Select 7-10 verified stories from the last 24 hours on geopolitics, EU/Austria, USA, Peru,
+economy/markets, AI/tech, crypto, major climate/energy, and significant social/education policy.
+Exclude sports, culture, entertainment, lifestyle, travel, food, shopping, celebrities, viral trivia,
+astrology, isolated crime without public relevance, and minor science without impact, unless the
+EXCEPTION RULE applies (substantial geopolitical, economic, regulatory, scientific, public-health
+or societal consequences). Prefer fewer high-quality stories; do not force equal category counts.
 '''
 
 
@@ -124,7 +106,15 @@ def parse_when(row):
     return now - timedelta(days=n)
 
 
-def fact_score(title, source):
+MONTH_MAP = {
+    'january': 0, 'febrero': 1, 'february': 1, 'marzo': 2, 'march': 2, 'abril': 3, 'april': 3,
+    'mayo': 4, 'may': 4, 'junio': 5, 'june': 5, 'julio': 6, 'july': 6, 'agosto': 7, 'august': 7,
+    'septiembre': 8, 'september': 8, 'octubre': 9, 'october': 9, 'noviembre': 10, 'november': 10,
+    'diciembre': 11, 'december': 11, 'enero': 0,
+}
+
+
+def fact_score(title, source, origin='serpapi'):
     score = min(len(re.findall(r'\d', title)), 8)
     if re.search(r'\bmagnitud\s*\d', title, re.I):
         score += 12
@@ -132,16 +122,110 @@ def fact_score(title, source):
         score += 8
     if PREFERRED.search(source) or PREFERRED.search(title):
         score += 10
+    if origin == 'rss' and PREFERRED.search(source):
+        score += 6
     if re.search(r'\b(conoce|revisa|ent[eé]rate|en vivo)\b', title, re.I) and not re.search(r'\d', title):
         score -= 8
     return score
+
+
+def is_stale_by_text(title, snippet=''):
+    now = datetime.now(timezone.utc)
+    text = f'{title} {snippet}'.lower()
+    year_match = re.search(r'\b(20\d{2})\b', text)
+    if year_match and int(year_match.group(1)) < now.year:
+        return True
+    month_match = re.search(
+        r'\b(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|'
+        r'january|february|march|april|may|june|july|august|september|october|november|december)\b',
+        text,
+    )
+    if month_match:
+        month = MONTH_MAP.get(month_match.group(1))
+        if month is not None and month != (now.month - 1):
+            if re.search(r'\b\d{1,2}\b', text) or re.search(r'\b(20\d{2})\b', text):
+                return True
+    return False
+
+
+BLOCKED = re.compile(r'britannica|wikipedia|wiki\b|encyclopedia', re.I)
+EXCLUDED_TOPIC = re.compile(
+    r'\b(f[uú]tbol|football|soccer|nba|nfl|mlb|nhl|bundesliga|champions league|gol\b|partido|'
+    r'deportes?|sports?|olympics?|ol[ií]mpic|tenis|tennis|f1\b|formula 1|boxeo|boxing|'
+    r'cine\b|pel[ií]cula|movie|hollywood|streaming|netflix|video ?game|esport|celebridad|celebrity|'
+    r'influencer|reality|gossip|moda\b|fashion|belleza|beauty|turismo|tourism|hotel|viaje|travel|'
+    r'receta|recipe|restaurante|gastronom|oferta|descuento|deal\b|shopping|hor[oó]scopo|astrolog|'
+    r'concierto|concert|album|meme\b|viral\b)\b',
+    re.I,
+)
+IMPACT_EXCEPTION = re.compile(
+    r'\b(guerra|war|sanci[oó]n|diplomacia|geopol[ií]tica|regulaci[oó]n|inflaci[oó]n|'
+    r'banco central|climate|clima|salud p[uú]blica|public health|pandemia|ciberataque|cyber|'
+    r'elecciones|election|congreso|parliament|energ[ií]a|opec|nato|onu|imf|fmi)\b',
+    re.I,
+)
+
+
+def append_item(out, seen, cutoff, *, category, category_de, title, link, source, when, snippet, origin):
+    if not title or not link or not when or when < cutoff or link in seen:
+        return
+    if is_stale_by_text(title, snippet):
+        return
+    if BLOCKED.search(source) or BLOCKED.search(title) or BLOCKED.search(link):
+        return
+    topic_text = f'{title} {snippet}'
+    if EXCLUDED_TOPIC.search(topic_text) and not IMPACT_EXCEPTION.search(topic_text):
+        return
+    seen.add(link)
+    item = {
+        'category': category,
+        'category_de': category_de,
+        'title': title,
+        'url': link,
+        'source': source,
+        'published': when.isoformat(),
+        'origin': origin,
+        'fact_score': fact_score(title, source, origin),
+    }
+    if snippet and snippet != title:
+        item['snippet'] = snippet
+    out.append(item)
+
+
+def collect_rss(out, seen, cutoff):
+    import xml.etree.ElementTree as ET
+    from email.utils import parsedate_to_datetime
+    for cat, cat_de, source_name_default, feed_url in OUTLET_FEEDS:
+        try:
+            root = ET.fromstring(fetch(feed_url))
+        except Exception as exc:
+            print('RSS failed', source_name_default, exc)
+            continue
+        items = root.findall('.//item') or root.findall('.//{http://purl.org/rss/1.0/}item')
+        for item in items[:20]:
+            title = (item.findtext('title') or item.findtext('{http://purl.org/rss/1.0/}title') or '').strip()
+            link = (item.findtext('link') or item.findtext('{http://purl.org/rss/1.0/}link') or '').strip()
+            pub = item.findtext('pubDate') or item.findtext('{http://purl.org/dc/elements/1.1/}date') or ''
+            when = None
+            if pub:
+                try:
+                    when = parsedate_to_datetime(pub).astimezone(timezone.utc) if ',' in pub else datetime.fromisoformat(pub.replace('Z', '+00:00'))
+                except Exception:
+                    when = parse_when({'date': pub})
+            raw = item.findtext('description') or item.findtext('{http://purl.org/rss/1.0/}description') or ''
+            snippet = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', raw)).strip()[:320]
+            append_item(
+                out, seen, cutoff,
+                category=cat, category_de=cat_de, title=title, link=link,
+                source=source_name_default, when=when, snippet=snippet, origin='rss',
+            )
 
 
 def collect():
     key = os.environ.get('SERPAPI_API_KEY', '').strip()
     if not key:
         raise RuntimeError('SERPAPI_API_KEY no configurada.')
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=30)
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
     out = []
     seen = set()
     for cat, cat_de, query, gl, hl in TOPICS:
@@ -162,27 +246,56 @@ def collect():
             title = str(row.get('title') or '').strip()
             link = str(row.get('link') or row.get('url') or '').strip()
             when = parse_when(row)
-            if not title or not link or not when or when < cutoff or link in seen:
-                continue
-            seen.add(link)
             source = source_name(row.get('source'))
             snippet = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', str(row.get('snippet') or ''))).strip()[:320]
-            item = {
-                'category': cat,
-                'category_de': cat_de,
-                'title': title,
-                'url': link,
-                'source': source,
-                'published': when.isoformat(),
-                'fact_score': fact_score(title, source),
-            }
-            if snippet and snippet != title:
-                item['snippet'] = snippet
-            out.append(item)
-    out.sort(key=lambda x: (-x['fact_score'], x['published']), reverse=False)
+            append_item(
+                out, seen, cutoff,
+                category=cat, category_de=cat_de, title=title, link=link,
+                source=source, when=when, snippet=snippet, origin='serpapi',
+            )
+    collect_rss(out, seen, cutoff)
     out.sort(key=lambda x: (-x['fact_score'], x['published']))
+
+    def norm_cat(category):
+        c = (category or '').lower()
+        if re.search(r'per[uú]', c):
+            return 'Perú'
+        if re.search(r'estados unidos|ee\.?\s?uu|usa|united states', c):
+            return 'Estados Unidos'
+        if re.search(r'europa|austria|österreich', c):
+            return 'Europa y Austria'
+        return category or 'Mundo'
+
+    priority = ['Perú', 'Estados Unidos', 'Europa y Austria']
+    per_priority, per_source_cap, max_total = 10, 12, 150
+    selected_raw, used_urls, per_source, per_cat = [], set(), {}, {}
+
+    def try_add(item, cat_limit=None):
+        if item['url'] in used_urls or len(selected_raw) >= max_total:
+            return False
+        src = (item.get('source') or 'unknown').lower()
+        if per_source.get(src, 0) >= per_source_cap:
+            return False
+        cat = norm_cat(item.get('category'))
+        if cat_limit is not None and per_cat.get(cat, 0) >= cat_limit:
+            return False
+        used_urls.add(item['url'])
+        per_source[src] = per_source.get(src, 0) + 1
+        per_cat[cat] = per_cat.get(cat, 0) + 1
+        item = dict(item)
+        item['category'] = cat
+        selected_raw.append(item)
+        return True
+
+    for cat in priority:
+        for item in out:
+            if norm_cat(item.get('category')) == cat:
+                try_add(item, per_priority)
+    for item in out:
+        try_add(item)
+
     selected = []
-    for i, item in enumerate(out[:80]):
+    for i, item in enumerate(selected_raw):
         row = {
             'id': f'h{i + 1}',
             'category': item['category'],
@@ -191,6 +304,7 @@ def collect():
             'source': item['source'],
             'published': item['published'],
             'url': item['url'],
+            'origin': item.get('origin', 'serpapi'),
         }
         if item.get('snippet'):
             row['snippet'] = item['snippet']
@@ -226,9 +340,29 @@ def markets_pack(now):
             })
     except Exception as exc:
         print('Frankfurter failed', exc)
+    for symbol, ticker in (
+        ('S&P 500', '%5EGSPC'),
+        ('Nasdaq', '%5EIXIC'),
+        ('Gold', 'GC=F'),
+        ('Brent', 'BZ=F'),
+    ):
+        try:
+            data = fetch_json(
+                f'https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d&range=1d'
+            )
+            meta = (((data or {}).get('chart') or {}).get('result') or [{}])[0].get('meta') or {}
+            price = meta.get('regularMarketPrice')
+            if price is None:
+                continue
+            as_of = now.isoformat()
+            if meta.get('regularMarketTime'):
+                as_of = datetime.fromtimestamp(meta['regularMarketTime'], tz=timezone.utc).isoformat()
+            items.append({'symbol': symbol, 'price': price, 'as_of': as_of, 'source': 'Yahoo Finance'})
+        except Exception as exc:
+            print('Yahoo failed', symbol, exc)
     return {
         'note': 'Solo precios verificados del research pack. Si falta un activo, omitirlo.',
-        'source': 'CoinGecko + Frankfurter',
+        'source': 'CoinGecko + Frankfurter + Yahoo Finance',
         'fetched_at': now.isoformat(),
         'items': items,
     }
@@ -282,8 +416,9 @@ def main():
         'headlines': headlines,
         'markets': markets,
         'research_limitation': (
-            'La investigación usa Google News vía SerpAPI (titulares, snippets, fechas y enlaces) '
-            'más precios de CoinGecko/Frankfurter. No se leen artículos completos.'
+            'La investigación usa Google News vía SerpAPI más RSS directos (ORF, BBC, DW, Andina, RPP) '
+            'y precios de CoinGecko/Frankfurter/Yahoo Finance. No se leen artículos completos. '
+            'Solo eventos de las últimas 24 horas.'
         ),
     }
     edition = summarize(pack)
