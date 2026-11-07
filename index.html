@@ -1,9 +1,489 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#102c39"><meta name="description" content="Un resumen diario de las noticias del mundo, en español y con fuentes."><title>El Mundo al Día</title><style>
-:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#18303c;background:#f5f6f4}*{box-sizing:border-box}body{margin:0}header{background:#102c39;color:white;padding:20px 5%}.wrap{max-width:1040px;margin:auto}.brand{font-family:Georgia,serif;font-size:clamp(28px,5vw,43px);font-weight:700}.tag{color:#b9cbd0;font-size:14px;margin-top:5px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}nav{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}nav a{color:#e5eeee;text-decoration:none;font-weight:600}main{padding:32px 5% 60px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.8px;color:#59727a;font-weight:800}h1,h2,h3{font-family:Georgia,serif}h1{font-size:clamp(30px,5vw,49px);line-height:1.12;margin:12px 0}h2{font-size:29px;margin-top:44px}p{line-height:1.65}.lead{font-size:19px;color:#435b65;max-width:740px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:#fff;border:1px solid #e0e7e6;border-radius:15px;padding:22px;box-shadow:0 3px 15px #102c3909}.card h3{font-size:23px;line-height:1.22;margin:12px 0}.category{font-size:12px;font-weight:800;color:#18747b;text-transform:uppercase;letter-spacing:.8px}.number{color:#ad7c30;font-size:16px;font-weight:800}.source{font-size:13px;color:#617781}.source a,.card a{color:#126b78;text-decoration:underline;text-underline-offset:3px}.story{margin-bottom:15px}.story h3{font-size:23px}.story .status{background:#edf4f3;border-radius:8px;padding:10px;font-size:14px}.archive{display:flex;flex-wrap:wrap;gap:10px}button,select{font:inherit;border-radius:9px;padding:10px 13px;border:1px solid #bbc9c9;background:white;color:#18303c;cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #d6a74a}footer{background:#e9efed;padding:25px 5%;color:#4b6068;font-size:14px}.notice{background:#fff6e5;padding:15px;border-left:4px solid #c68d2e;border-radius:5px}.empty{padding:35px;border:1px dashed #abb9b8;border-radius:12px}body.large{font-size:20px}body.large .source{font-size:16px}@media(max-width:760px){.grid{grid-template-columns:1fr}main{padding-top:24px}.card{padding:19px}h2{font-size:27px}}
-</style></head><body><header><div class="wrap"><div class="top"><div><div class="brand">🌍 El Mundo al Día</div><div class="tag">Las noticias importantes, explicadas con claridad</div></div><button id="fontBtn" aria-label="Aumentar o reducir el tamaño de letra">A± Letra grande</button></div><nav><a href="#portada">Portada</a><a href="#noticias">Noticias</a><a href="#peru">Perú</a><a href="#archivo">Ediciones anteriores</a></nav></div></header><main class="wrap"><section id="portada"><div class="eyebrow">Tu periódico familiar · <span id="date">Cargando...</span></div><h1 id="headline">Lo que está pasando en el mundo</h1><p class="lead" id="intro">Un resumen diario para estar informado sin perderse en titulares.</p><div class="notice" id="notice">Los artículos se seleccionan y resumen automáticamente. Consulta siempre las fuentes originales para confirmar detalles importantes.</div><h2>Las tres claves del día</h2><div class="grid" id="top"></div></section><section id="noticias"><h2>Más noticias</h2><div id="stories"></div></section><section id="peru"><h2>🇵🇪 Perú en el foco</h2><div id="peruNews"></div></section><section id="archivo"><h2>Ediciones anteriores</h2><div class="archive" id="archiveLinks"></div></section></main><footer><div class="wrap">El Mundo al Día · Lectura gratuita · Actualización diaria prevista a las 08:00, hora de Austria. <p>Contenido automatizado. No se publican hechos no corroborados como si fueran confirmados. La hora de actualización puede variar según la plataforma.</p></div></footer><script>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#EFE5CD">
+<meta name="description" content="Noticias del día para familias, en español y alemán, con enlaces a las fuentes.">
+<title>El Mundo al Día</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EFE5CD;
+  --ink:#1E1912;
+  --muted:#5B4F3E;
+  --rule:#1E191240;
+  --accent:#2F5F8F;
+  --font:"Source Serif 4",Georgia,serif;
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:1.0625rem;
+  line-height:1.6;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  color:var(--ink);
+  background-color:var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .27 0 0 0 0 .14 0 0 0 .2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 50% 0%,rgba(255,250,235,.55),transparent 65%),
+    radial-gradient(ellipse at 50% 100%,rgba(150,115,60,.18),transparent 70%);
+  background-attachment:scroll,fixed,fixed;
+}
+a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1.5px;transition:text-decoration-thickness 150ms ease}
+a:hover{text-decoration-thickness:3px}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* Masthead — title + date centered, language on the right */
+header{
+  margin:0;
+  padding:0;
+  width:100%;
+  border-top:3px solid var(--ink);
+  border-bottom:4px double var(--ink);
+  display:grid;
+  grid-template-columns:44px 1fr 44px;
+  align-items:center;
+  gap:4px 0;
+  padding-block:12px 14px;
+}
+.masthead{
+  grid-column:2;
+  text-align:center;
+  min-width:0;
+}
+.brand{
+  margin:0;
+  font-weight:700;
+  font-size:clamp(1.85rem,8vw,3rem);
+  line-height:1.1;
+}
+.dateline{
+  margin:6px 0 0;
+  font-size:0.85rem;
+  font-weight:700;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+#langBtn{
+  grid-column:3;
+  grid-row:1 / span 2;
+  justify-self:end;
+  align-self:center;
+  border:0;
+  outline:none;
+  box-shadow:none;
+  border-radius:0;
+  background:transparent;
+  width:44px;
+  min-width:44px;
+  min-height:44px;
+  padding:0;
+  cursor:pointer;
+  font-size:1.5rem;
+  line-height:1;
+  transition:background 180ms ease;
+}
+#langBtn:hover,#langBtn:focus-visible{outline:none;background:color-mix(in srgb,var(--ink) 8%,transparent)}
+
+/* Filters — same paper color, full width */
+.filters{
+  position:sticky;
+  top:0;
+  z-index:5;
+  width:100%;
+  margin:0;
+  background:var(--paper);
+  border-bottom:1px solid var(--ink);
+  display:flex;
+  gap:0;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.filters::-webkit-scrollbar{display:none}
+.filters button{
+  flex:0 0 auto;
+  border:0;
+  border-bottom:3px solid transparent;
+  border-radius:0;
+  background:transparent;
+  color:var(--ink);
+  font:inherit;
+  font-size:1rem;
+  font-weight:700;
+  padding:12px 14px 10px;
+  min-height:48px;
+  cursor:pointer;
+  transition:border-color 150ms ease;
+}
+.filters button[aria-pressed="true"]{border-bottom-color:var(--accent)}
+.filters button:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+
+/* Feed */
+main{margin:0;padding:0 0 40px;width:100%}
+.note{
+  margin:0;
+  padding:12px 0;
+  width:100%;
+  border-bottom:1px solid var(--rule);
+  font-size:0.9rem;
+  font-weight:700;
+  color:var(--muted);
+}
+.briefing{padding:16px 12px 8px;border-bottom:1px solid var(--rule)}
+.briefing .kicker{
+  margin:0 0 6px;
+  font-size:0.85rem;
+  font-weight:700;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+.briefing h2{
+  margin:0 0 8px;
+  font-size:clamp(1.2rem,4vw,1.45rem);
+  line-height:1.25;
+}
+.briefing .intro{margin:0;color:var(--muted)}
+.markets,.focus-box,.closing{
+  margin:0;
+  padding:14px 12px;
+  border-bottom:1px solid var(--rule);
+}
+.markets h3,.focus-box h3,.closing h3,.section-label{
+  margin:0 0 8px;
+  font-size:0.85rem;
+  font-weight:700;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+.markets ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 14px}
+.markets li{font-weight:700;font-variant-numeric:tabular-nums}
+.markets .sym{color:var(--accent)}
+.focus-box p,.closing p{margin:0 0 8px}
+.focus-box p:last-child,.closing p:last-child{margin-bottom:0}
+.section-label{padding:14px 12px 0}
+.feed{margin:0;width:100%;border-left:3px solid var(--accent)}
+#feedWrap.fade .feed,.feed.fade{animation:fade 200ms ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.item{position:relative;margin:0;padding:20px 12px 20px 20px;width:100%;border-bottom:1px solid var(--rule)}
+.item:last-child{border-bottom:0}
+.item::before{
+  content:"";
+  position:absolute;
+  left:-9.5px;
+  top:27px;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:var(--accent);
+  border:3px solid var(--paper);
+}
+.item.top::before{background:var(--ink)}
+.item .rank{
+  display:inline-block;
+  margin:0 0 6px;
+  font-size:0.8rem;
+  font-weight:700;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+.title{
+  margin:0;
+  font-weight:700;
+  font-size:clamp(1.35rem,4.8vw,1.75rem);
+  line-height:1.2;
+}
+.meta{
+  margin:8px 0 10px;
+  font-size:0.95rem;
+  font-weight:700;
+  color:var(--muted);
+}
+.meta .cat{color:var(--accent)}
+.summary{margin:0 0 6px}
+details{margin:0}
+details summary{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:44px;
+  cursor:pointer;
+  list-style:none;
+  color:var(--accent);
+  font-size:0.95rem;
+  font-weight:700;
+}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"⌄";font-size:1.2rem;line-height:1;transition:transform 150ms ease}
+details[open] summary::after{transform:rotate(180deg)}
+details p{margin:0 0 8px;font-size:0.98rem}
+.status{font-size:0.9rem;color:var(--muted)}
+.src{margin:2px 0 0;font-size:0.92rem;color:var(--muted)}
+.empty{padding:28px 12px 28px 20px;color:var(--muted)}
+
+/* Archive + footer — full-width rules */
+.archive-title{
+  margin:0;
+  padding:14px 12px 8px;
+  width:100%;
+  border-top:3px double var(--ink);
+  font-weight:700;
+  font-size:1.2rem;
+}
+.archive{display:flex;flex-wrap:wrap;gap:6px 18px;padding:0 12px 8px;font-weight:700}
+.archive a{display:inline-flex;align-items:center;min-height:44px}
+footer{
+  margin:0;
+  width:100%;
+  border-top:1px solid var(--ink);
+  padding:18px 12px 32px;
+  font-size:0.88rem;
+  color:var(--muted);
+}
+footer p{margin:0 0 0.6em}
+
+@media (prefers-reduced-motion:reduce){
+  .feed.fade{animation:none}
+  #langBtn,a,.filters button,details summary::after{transition:none}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="masthead">
+<h1 class="brand">El Mundo al Día</h1>
+<p class="dateline" id="date"></p>
+</div>
+<button type="button" id="langBtn"></button>
+</header>
+<nav class="filters" id="filters">
+<button type="button" data-filter="all" aria-pressed="true"></button>
+<button type="button" data-filter="peru" aria-pressed="false"></button>
+<button type="button" data-filter="us" aria-pressed="false"></button>
+<button type="button" data-filter="at-eu" aria-pressed="false"></button>
+</nav>
+<main>
+<p class="note" id="edNote" hidden></p>
+<section class="briefing" id="briefing" hidden></section>
+<section class="markets" id="markets" hidden></section>
+<section class="focus-box" id="focusBox" hidden></section>
+<div id="feedWrap" aria-live="polite"></div>
+<section class="closing" id="closing" hidden></section>
+<h2 class="archive-title" id="archiveTitle"></h2>
+<div class="archive" id="archiveLinks"></div>
+</main>
+<footer>
+<p id="footer1"></p>
+<p id="footer2"></p>
+</footer>
+<script>
+const COPY={
+es:{
+filterLabel:'Filtrar noticias',
+filters:['Última hora','Perú','EE. UU.','Austria y UE'],
+langSwitchTo:'Cambiar a Deutsch (Österreich)',
+loading:'Cargando...',
+demo:'Edición de demostración: estos textos son ejemplos, no noticias verificadas.',
+missing:'',
+none:'No hay noticias en esta sección en esta edición.',
+archive:'Ediciones anteriores',why:'Por qué importa',status:'Estado de verificación:',source:'Fuente',read:'Leer fuente original ↗',
+empty:'Todavía no hay una edición disponible. Vuelve más tarde.',
+noDate:'Sin edición disponible',
+topLabel:'Destacada',
+moreLabel:'Más noticias',
+markets:'Mercados',
+peru:'Perú',
+austria:'Austria / UE',
+conclusion:'Cierre del día',
+facts:'Hechos confirmados',
+unverified:'No verificado / en disputa',
+window:'Ventana de 24 h',
+footer1:'El Mundo al Día · Lectura gratuita · Actualización diaria prevista a las 08:00, hora de Austria.',
+footer2:'Los artículos se investigan con Google News (SerpAPI) y se resumen automáticamente. Consulta siempre las fuentes originales para confirmar detalles importantes.'
+},
+de:{
+filterLabel:'Nachrichten filtern',
+filters:['Eilmeldungen','Peru','USA','Österreich & EU'],
+langSwitchTo:'Wechseln zu Español (Perú)',
+loading:'Wird geladen...',
+demo:'Demo-Ausgabe: Diese Texte sind Beispiele, keine geprüften Nachrichten.',
+missing:'Die deutsche Fassung folgt mit der nächsten Ausgabe. Die Meldungen stehen noch auf Spanisch.',
+none:'In dieser Ausgabe gibt es hierzu keine Nachrichten.',
+archive:'Frühere Ausgaben',why:'Warum das zählt',status:'Prüfstatus:',source:'Quelle',read:'Originalquelle lesen ↗',
+empty:'Noch keine Ausgabe vorhanden. Bitte später wiederkommen.',
+noDate:'Keine Ausgabe verfügbar',
+topLabel:'Top-Meldung',
+moreLabel:'Weitere Nachrichten',
+markets:'Märkte',
+peru:'Peru',
+austria:'Österreich / EU',
+conclusion:'Tagesabschluss',
+facts:'Bestätigte Fakten',
+unverified:'Ungeprüft / strittig',
+window:'24-Stunden-Fenster',
+footer1:'El Mundo al Día · Kostenlos · Tägliche Aktualisierung vorgesehen um 08:00 Uhr, österreichische Zeit.',
+footer2:'Die Beiträge werden über Google News (SerpAPI) recherchiert und automatisch zusammengefasst. Prüfen Sie wichtige Details immer in der Originalquelle.'
+}};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const url=s=>{try{let u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:'#'}catch{return '#'}};
-function story(n,compact=false){return `<article class="card story"><div class="category">${esc(n.category||'Mundo')}</div><h3>${esc(n.title)}</h3><p>${esc(n.summary)}</p>${n.impact?`<p><strong>Por qué importa:</strong> ${esc(n.impact)}</p>`:''}${n.verification?`<p class="status"><strong>Estado de verificación:</strong> ${esc(n.verification)}</p>`:''}<div class="source">${esc(n.source||'Fuente')} · <a href="${esc(url(n.url))}" target="_blank" rel="noopener noreferrer">Leer fuente original ↗</a></div></article>`}
-async function load(){try{let manifest=await(await fetch('data/manifest.json',{cache:'no-store'})).json();let date=new URLSearchParams(location.search).get('fecha');let file=manifest.editions.find(x=>x.date===date)?.file||manifest.editions[0]?.file;if(!file)throw Error('No hay ediciones');let d=await(await fetch('data/'+file,{cache:'no-store'})).json();document.getElementById('date').textContent=d.date_label||d.date;document.getElementById('headline').textContent=d.headline||'Las noticias del día';document.getElementById('intro').textContent=d.intro||'';document.getElementById('top').innerHTML=(d.stories||[]).slice(0,3).map(x=>story(x,true)).join('');document.getElementById('stories').innerHTML=(d.stories||[]).slice(3).map(story).join('')||'<p>No hay más noticias en esta edición.</p>';let p=(d.stories||[]).filter(x=>/perú|peru/i.test(x.category||''));document.getElementById('peruNews').innerHTML=p.length?p.map(story).join(''):'<p>No se encontraron noticias peruanas suficientemente verificadas para esta edición.</p>';document.getElementById('archiveLinks').innerHTML=manifest.editions.map(x=>`<a href="?fecha=${encodeURIComponent(x.date)}">${esc(x.date)}</a>`).join(' · ');if(d.demo)document.getElementById('notice').textContent='EDICIÓN DE DEMOSTRACIÓN: estos textos son ejemplos, no noticias verificadas. La primera actualización real se generará al configurar la automatización.'}catch(e){document.getElementById('top').innerHTML='<div class="empty">Todavía no hay una edición disponible. Configura la actualización automática o vuelve más tarde.</div>';document.getElementById('date').textContent='Sin edición disponible'}}
-document.getElementById('fontBtn').onclick=()=>{document.body.classList.toggle('large');document.getElementById('fontBtn').textContent=document.body.classList.contains('large')?'A− Letra normal':'A± Letra grande'};load();
-</script></body></html>
+const API='https://n8n.aisolutions.at/webhook/el-mundo-al-dia';
+let lang=localStorage.getItem('elmundo-lang')==='de'?'de':'es';
+let filter='all';
+let edition=null;
+let manifest=null;
+const t=k=>COPY[lang][k];
+function text(item,key){let de=item&&item[key+'_de'];return tidy(lang==='de'&&de?de:(item&&item[key])||'')}
+function tidy(value){let out=String(value||'').trim();['Información basada en titulares; consultar la fuente original.','Information beruht auf Schlagzeilen; Originalquelle prüfen.','Información basada en investigación de titulares/snippets vía SerpAPI; consultar las fuentes originales.','Information beruht auf SerpAPI-Titeln/Snippets; Originalquellen prüfen.'].forEach(mark=>{let doubled=mark+' '+mark;while(out.includes(doubled))out=out.replace(doubled,mark)});return out}
+const CAT_DE={
+'Mundo':'Welt','Geopolítica':'Geopolitik','Europa y Austria':'Europa und Österreich',
+'Estados Unidos':'Vereinigte Staaten','Perú':'Peru','Economía':'Wirtschaft',
+'Inteligencia artificial':'Künstliche Intelligenz','Criptomonedas':'Kryptowährungen'
+};
+function categoryLabel(n){
+  if(lang==='de'){
+    const de=text(n,'category');
+    if(n.category_de)return de;
+    return CAT_DE[n.category]||de||t('source');
+  }
+  return text(n,'category')||t('source');
+}
+/** Region used by the filter: explicit `region` first, then inferred from the category. */
+function regionOf(n){
+  if(n.region)return n.region;
+  const c=String(n.category||'').toLowerCase();
+  const r=String(n.country_region||'').toLowerCase();
+  if(/per[uú]/.test(c)||/per[uú]/.test(r))return 'peru';
+  if(/estados unidos|ee\.?\s?uu|usa|united states/.test(c)||/usa|united states|ee\.?\s?uu/.test(r))return 'us';
+  if(/austria|österreich|europa|europe|uni[oó]n europea/.test(c)||/austria|österreich|europe|eu\b/.test(r))return 'at-eu';
+  return 'world';
+}
+/** Date and time in Austrian time; falls back to the edition date when a story has no timestamp. */
+function stamp(n){
+  const loc=lang==='de'?'de-AT':'es-PE';
+  const d=n.published?new Date(n.published):null;
+  if(d&&!isNaN(d))return `<time datetime="${esc(d.toISOString())}">${esc(new Intl.DateTimeFormat(loc,{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZone:'Europe/Vienna'}).format(d))}</time>`;
+  const day=edition&&edition.date?new Date(edition.date+'T00:00:00Z'):null;
+  if(day&&!isNaN(day))return `<time datetime="${esc(edition.date)}">${esc(new Intl.DateTimeFormat(loc,{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(day))}</time>`;
+  return '';
+}
+function money(value,symbol){
+  const n=Number(value);
+  if(Number.isNaN(n))return String(value??'');
+  const loc=lang==='de'?'de-AT':'es-PE';
+  if(symbol==='EUR/USD')return new Intl.NumberFormat(loc,{minimumFractionDigits:4,maximumFractionDigits:4}).format(n);
+  return new Intl.NumberFormat(loc,{style:'currency',currency:'USD',maximumFractionDigits:n>=1000?0:2}).format(n);
+}
+function sourceLinks(n){
+  const list=(Array.isArray(n.sources)&&n.sources.length?n.sources:[{source:n.source,url:n.url}]).filter(s=>s&&s.url);
+  return list.map(s=>`${esc(s.source||t('source'))} · <a href="${esc(url(s.url))}" target="_blank" rel="noopener noreferrer">${esc(t('read'))}</a>`).join('<br>');
+}
+function story(n,rank){
+  const impact=text(n,'impact'),check=text(n,'verification');
+  const facts=String(n.confirmed_facts||'').trim();
+  const open=String(n.unverified_claims||'').trim();
+  const more=(impact||check||facts||open)?`<details><summary>${esc(t('why'))}</summary>${impact?`<p>${esc(impact)}</p>`:''}${facts?`<p class="status"><strong>${esc(t('facts'))}:</strong> ${esc(facts)}</p>`:''}${open&&!/^none$|^ningun/i.test(open)?`<p class="status"><strong>${esc(t('unverified'))}:</strong> ${esc(open)}</p>`:''}${check?`<p class="status"><strong>${esc(t('status'))}</strong> ${esc(check)}</p>`:''}</details>`:'';
+  const badge=rank?`<span class="rank">${esc(t('topLabel'))} ${rank}</span>`:'';
+  return `<article class="item${rank?' top':''}">${badge}<h2 class="title">${esc(text(n,'title'))}</h2><div class="meta"><span class="cat">${esc(categoryLabel(n))}</span>: ${stamp(n)}</div><p class="summary">${esc(text(n,'summary'))}</p>${more}<p class="src">${sourceLinks(n)}</p></article>`;
+}
+function applyChrome(){
+  document.documentElement.lang=lang==='de'?'de':'es';
+  let langBtn=document.getElementById('langBtn');
+  langBtn.textContent=lang==='de'?'🇦🇹':'🇵🇪';
+  langBtn.setAttribute('aria-label',t('langSwitchTo'));
+  langBtn.title=t('langSwitchTo');
+  document.getElementById('filters').setAttribute('aria-label',t('filterLabel'));
+  document.querySelectorAll('#filters button').forEach((b,i)=>{b.textContent=t('filters')[i];b.setAttribute('aria-pressed',String(b.dataset.filter===filter))});
+  document.getElementById('archiveTitle').textContent=t('archive');
+  document.getElementById('footer1').textContent=t('footer1');
+  document.getElementById('footer2').textContent=t('footer2');
+  if(!edition){document.getElementById('date').textContent=t('loading');document.getElementById('feedWrap').innerHTML=`<p class="empty">${esc(t('loading'))}</p>`}
+}
+function render(animate){
+  if(!edition)return;
+  let d=edition;
+  let label=d.date_label||d.date||'';
+  if(lang==='de')label=label.replace('(Austria)','(Österreich)');
+  document.getElementById('date').textContent=label;
+  let note=d.demo?t('demo'):(lang==='de'&&!d.headline_de?t('missing'):'');
+  let noteEl=document.getElementById('edNote');
+  noteEl.textContent=note;noteEl.hidden=!note;
+
+  const headline=text(d,'headline');
+  const intro=text(d,'intro');
+  const briefing=document.getElementById('briefing');
+  if(filter==='all'&&(headline||intro)){
+    briefing.hidden=false;
+    briefing.innerHTML=`${d.reporting_window?`<p class="kicker">${esc(t('window'))}: ${esc(d.reporting_window)}</p>`:''}${headline?`<h2>${esc(headline)}</h2>`:''}${intro?`<p class="intro">${esc(intro)}</p>`:''}`;
+  }else{briefing.hidden=true;briefing.innerHTML=''}
+
+  const marketItems=(d.markets&&d.markets.items)||[];
+  const markets=document.getElementById('markets');
+  if(filter==='all'&&marketItems.length){
+    markets.hidden=false;
+    markets.innerHTML=`<h3>${esc(t('markets'))}</h3><ul>${marketItems.map(m=>`<li><span class="sym">${esc(m.symbol)}</span> ${esc(money(m.price,m.symbol))}</li>`).join('')}</ul>`;
+  }else{markets.hidden=true;markets.innerHTML=''}
+
+  const peru=text(d,'peru_update');
+  const austria=text(d,'austria_update');
+  const focus=document.getElementById('focusBox');
+  if(filter==='all'&&(peru||austria)){
+    focus.hidden=false;
+    focus.innerHTML=`${peru?`<h3>${esc(t('peru'))}</h3><p>${esc(peru)}</p>`:''}${austria?`<h3>${esc(t('austria'))}</h3><p>${esc(austria)}</p>`:''}`;
+  }else{focus.hidden=true;focus.innerHTML=''}
+
+  let stories=(d.stories||[]).slice();
+  const hasTop=stories.some(n=>n.is_top);
+  if(!hasTop&&stories.every(n=>n.published))stories.sort((a,b)=>new Date(b.published)-new Date(a.published));
+  else stories.sort((a,b)=>Number(b.is_top)-Number(a.is_top));
+  let shown=filter==='all'?stories:stories.filter(n=>regionOf(n)===filter);
+  const tops=shown.filter(n=>n.is_top).slice(0,3);
+  const rest=shown.filter(n=>!tops.includes(n));
+  const feedWrap=document.getElementById('feedWrap');
+  if(!shown.length){
+    feedWrap.innerHTML=`<p class="empty">${esc(t('none'))}</p>`;
+  }else{
+    const topHtml=tops.length?`<div class="feed">${tops.map((n,i)=>story(n,i+1)).join('')}</div>`:'';
+    const restHtml=rest.length?`${filter==='all'&&tops.length?`<p class="section-label">${esc(t('moreLabel'))}</p>`:''}<div class="feed">${rest.map(n=>story(n)).join('')}</div>`:(tops.length?'':`<p class="empty">${esc(t('none'))}</p>`);
+    feedWrap.innerHTML=topHtml+restHtml;
+  }
+  if(animate){feedWrap.classList.remove('fade');void feedWrap.offsetWidth;feedWrap.classList.add('fade')}
+
+  const closing=document.getElementById('closing');
+  const conclusion=text(d,'conclusion');
+  if(filter==='all'&&conclusion){
+    closing.hidden=false;
+    closing.innerHTML=`<h3>${esc(t('conclusion'))}</h3><p>${esc(conclusion)}</p>`;
+  }else{closing.hidden=true;closing.innerHTML=''}
+
+  document.getElementById('archiveLinks').innerHTML=(manifest?.editions||[]).map(x=>`<a href="?fecha=${encodeURIComponent(x.date)}">${esc(x.date)}</a>`).join('');
+}
+function setLang(next){lang=next;localStorage.setItem('elmundo-lang',lang);applyChrome();render()}
+function setFilter(next){filter=next;applyChrome();render(true)}
+document.getElementById('langBtn').onclick=()=>setLang(lang==='es'?'de':'es');
+document.querySelectorAll('#filters button').forEach(b=>{b.onclick=()=>setFilter(b.dataset.filter)});
+async function readJson(query,localPath){try{let remote=await fetch(API+'?'+query,{cache:'no-store'});if(remote.ok)return await remote.json()}catch(e){}let local=await fetch(localPath,{cache:'no-store'});if(!local.ok)throw Error('Sin edición');return await local.json()}
+async function load(){
+  applyChrome();
+  try{
+    manifest=await readJson('recurso=manifest','data/manifest.json');
+    let date=new URLSearchParams(location.search).get('fecha');
+    let item=manifest.editions.find(x=>x.date===date)||manifest.editions[0];
+    if(!item)throw Error('No hay ediciones');
+    edition=await readJson('recurso=edicion&fecha='+encodeURIComponent(item.date),'data/'+item.file);
+    render();
+  }catch(e){
+    document.getElementById('feed').innerHTML=`<p class="empty">${esc(t('empty'))}</p>`;
+    document.getElementById('date').textContent=t('noDate');
+  }
+}
+load();
+</script>
+</body>
+</html>
